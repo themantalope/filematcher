@@ -50,10 +50,12 @@ class FileMatcher(object):
                 uniques.append(k)
             elif v == 1 and not use_mode_length:
                 uniques.append(k)
+            elif v > 1:
+                self.non_unique.append(k)
         
         self.unique = set(uniques)
         self.unique_dict = {k:{} for k in self.unique}
-        if return_output: return self.unique
+        if return_output: return self.unique, self.non_unique
 
     
 
