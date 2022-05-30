@@ -59,15 +59,15 @@ class FileMatcher(object):
 
     
 
-    def match_list_to_unique_ids(self, file_list, name, key_name=None, return_output=False, warn_on_dup=True):
+    def match_list_to_unique_ids(self, file_list, name_patt='.*', key_name=None, return_output=False, warn_on_dup=True):
         assert self.unique is not None, 'you must have already filtered a list and gotten unique ids.'
-        patt = re.compile(name)
+        patt = re.compile(name_patt)
         file_list = [f for f in file_list if re.search(patt, f)]
         pattern_sets = [set(re.findall(self.patt, fn)) for fn in file_list]
         unique_keys = set(list(self.unique))
         
         if key_name is None:
-            key_name = name
+            key_name = name_patt
         
         for (ps, fn) in zip(pattern_sets, file_list):
             inter = unique_keys.intersection(ps)
@@ -104,14 +104,19 @@ class FileMatcher(object):
         df.sort_index(inplace=True)
         return df
     
-    def collect_file_names(self, root_dir, exts):
-        patt = re.compile('|'.join(str(s) for s in exts))
+    def collect_file_names(self, root_dir, patts, ext=None):
+        # print(exts)
+        # print(type(exts))
+        patt = re.compile('|'.join([str(s) for s in patts]))
+        if ext is None:
+            ext = '.*'
+        ext_patt = re.compile(ext)
         results = []
         for dp, _, fn in os.walk(root_dir):
             if len(fn) == 0:continue
             else:
                 for f in fn:
-                    if re.search(patt, f):
+                    if re.search(patt, compose_path(dp, f)) and re.search(ext_patt, f):
                         results.append(compose_path(dp, f))
 
         return results
