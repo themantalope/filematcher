@@ -22,7 +22,7 @@ class FileMatcher(object):
         self.non_matched = []
         self.unique = {}
 
-    def find_unique_ids_in_file_list(self, file_list, name, use_mode_length=True, return_output=False):
+    def find_unique_ids_in_file_list(self, file_list, name, use_mode_length=True, return_output=False, max_length=int(1e3):
         """
         returns a set of unique ids
         """
@@ -48,7 +48,7 @@ class FileMatcher(object):
         for k, v in counts.items():
             if use_mode_length and v == 1 and len(k) == str_mode_len:
                 uniques.append(k)
-            elif v == 1 and not use_mode_length:
+            elif v == 1 and not use_mode_length and len(k) < max_length:
                 uniques.append(k)
             elif v > 1:
                 self.non_unique.append(k)
