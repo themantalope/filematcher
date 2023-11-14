@@ -5,6 +5,15 @@ from scipy import stats
 import warnings
 # default pattern to break filenames: '([0-9a-zA-Z]+)'
 
+import logging
+logger = logging.getLogger(__name__)
+ch = logging.StreamHandler()
+formatting = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatting)
+ch.setLevel(logging.DEBUG)
+logger.addHandler(ch)
+
+
 def compose_path(dirpath, fn):
     return os.path.join(dirpath, fn)
 
@@ -22,7 +31,13 @@ class FileMatcher(object):
         self.non_matched = []
         self.unique = {}
 
-    def find_unique_ids_in_file_list(self, file_list, name, use_mode_length=True, return_output=False, max_length=int(1e3):
+    def find_unique_ids_in_file_list(
+        self, 
+        file_list, 
+        name, 
+        use_mode_length=True, 
+        return_output=False, 
+        max_length=int(1e3)):
         """
         returns a set of unique ids
         """
@@ -30,6 +45,10 @@ class FileMatcher(object):
         file_list = [f for f in file_list if re.search(patt, f)]
         
         pattern_sets = [set(re.findall(self.patt, fn)) for fn in file_list]
+        # if log level is debug, print out the pattern sets
+        if logger.getEffectiveLevel() == 10:
+            for ps in pattern_sets:
+                logger.debug(ps)
         counts = {}
         for ps in pattern_sets:
             for p in ps:
