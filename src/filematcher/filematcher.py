@@ -82,6 +82,10 @@ class FileMatcher(object):
         assert self.unique is not None, 'you must have already filtered a list and gotten unique ids.'
         patt = re.compile(name_patt)
         file_list = [f for f in file_list if re.search(patt, f)]
+        # if we are at debug level, print out the file list
+        if logger.getEffectiveLevel() == 10:
+            for f in file_list:
+                logger.debug(f)
         pattern_sets = [set(re.findall(self.patt, fn)) for fn in file_list]
         unique_keys = set(list(self.unique))
         
